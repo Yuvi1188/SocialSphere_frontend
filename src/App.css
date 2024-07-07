@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    background-color: #010001;
+}
+
+.dark-background {
+    background-color: #010001;
+}
+
+.dropdown-toggle::after {
+    display: inline-block;
+    margin-left: 0;
+    vertical-align: 0;
+    content: "";
+    border-top: 0 solid;
+    border-right: 0 solid transparent;
+    border-bottom: 0;
+    border-left: 0 solid transparent;
+}
+
+.dropdown-item.active,
+.dropdown-item:active {
+    color: var(--bs-dropdown-link-active-color);
+    text-decoration: none;
+    background-color: #6b696900;
+}
+
+.video-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 20rem;
+    max-height: 38rem;
+    /* Set the desired height */
+    overflow: hidden;
+    /* Hide any overflow */
+}
+
+.video-container video {
+    max-width: 100%;
+    /* max-height: 100%; */
+    height: 33rem;
+}
