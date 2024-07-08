@@ -258,7 +258,7 @@ export const updateProfile = (profileData) => {
             dispatch(userActions.userReducer({ loading: true, buttonLoading: false, isAuthenticated: true }));
 
             // Make API call to update profile
-            const response = await axios.post('http://localhost:8000/users/updateprofile', profileData, {
+            const response = await axios.post('https://socialsphere-backend-0v3g.onrender.com/users/updateprofile', profileData, {
                 headers: {
                     'Content-Type': 'multipart/form-data', // Set the content type to multipart form data
                     'Authorization': localStorage.getItem('authToken') // Include authorization token if needed
