@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create an instance of axios and export it directly
 const axiosInstance = axios.create({
-    baseURL: 'https://social-sphere-backend-rust.vercel.app/',
+    baseURL: 'https://socialsphere-backend-0v3g.onrender.com/',
     headers: {
         'Content-Type': 'application/json',
     },
