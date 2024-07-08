@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client';
 
-const socket = io('https://social-sphere-backend-rust.vercel.app/', {
+const socket = io('https://socialsphere-backend-0v3g.onrender.com/', {
     transports: ['websocket'],
 });
 
