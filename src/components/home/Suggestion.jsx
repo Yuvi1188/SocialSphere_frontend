@@ -10,7 +10,7 @@ const Suggestion = ({ suggestion }) => {
     const [buttonLoading, setButtonLoading] = useState(false);
     const dispatch = useDispatch();
     const { profile, loading, } = useSelector((state) => state.profile);
-
+      
     const handleFollow = async () => {
         setButtonLoading(true);
         console.log(suggestion);
@@ -33,7 +33,7 @@ const Suggestion = ({ suggestion }) => {
         <div className={`flex flex-row justify-between items-center relative border-none mb-6`} style={{ width: '18rem' }}>
             <NavLink to={`/profile/${suggestion._id}`} className='no-underline text-white'>
                 <div className="flex flex-row items-center">
-                    <UserImg imag={suggestion.profileImg} dim={3.1} />
+                    <UserImg imag={suggestion.userImgUrl.url} dim={3.1} />
                     <p className="card-title ml-2 mb-0">
                         {suggestion.username}
                         <br />

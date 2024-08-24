@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create an instance of axios and export it directly
 const axiosInstance = axios.create({
-    baseURL: 'https://socialsphere-backend-0v3g.onrender.com/',
+    baseURL: 'http://localhost:8000',
     headers: {
         'Content-Type': 'application/json',
     },

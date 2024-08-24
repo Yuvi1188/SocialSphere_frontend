@@ -1,13 +1,16 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import ProfileIcon from './ProfileIcon';
 import { FaHeart, FaComment, FaPaperPlane, FaVolumeMute, FaVolumeUp, FaSmile } from 'react-icons/fa';
 import socket from '../../socket';
 import CommentDialog from '../layout/Comment';
-import LikeList from '../layout/LikeList'; // Import the LikeList component
-import { useSelector } from 'react-redux';
+import LikeList from '../layout/LikeList';
+import { useDispatch, useSelector } from 'react-redux';
 import { formatDistanceToNow, parseISO } from 'date-fns';
 import EmojiPicker from 'emoji-picker-react';
 import { NavLink } from 'react-router-dom';
+import { BsThreeDots } from "react-icons/bs";
+import { FaBars } from 'react-icons/fa';
+import {removePost} from '../../store/post-action'
 
 const Post = ({ post }) => {
     const videoRef = useRef(null);
@@ -17,11 +20,12 @@ const Post = ({ post }) => {
     const [comments, setComments] = useState(post.comments);
     const [commentDialogOpen, setCommentDialogOpen] = useState(false);
     const [likeListOpen, setLikeListOpen] = useState(false);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
     const { user } = useSelector((state) => state.user);
     const [commentText, setCommentText] = useState('');
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const inputRef = useRef(null);
-
+     const dispatch = useDispatch();
     const toggleMute = () => {
         if (videoRef.current) {
             videoRef.current.muted = !videoRef.current.muted;
@@ -47,6 +51,7 @@ const Post = ({ post }) => {
     };
 
     const handleLike = () => {
+        
         socket.emit('likePost', { postId: post._id, userId: user._id });
     };
 
@@ -89,15 +94,42 @@ const Post = ({ post }) => {
     const closeLikeList = () => {
         setLikeListOpen(false);
     };
+
+    const toggleDropdown = () => {
+        setDropdownOpen(!dropdownOpen);
+    };
+    const handleDelete = () =>{
+         dispatch(removePost(post._id));
+    };
+
     // Calculate the time since the post was created
     const timeSincePost = formatDistanceToNow(parseISO(post.createdAt), { addSuffix: true });
+
+    // Check if the logged-in user is the post's author
+    const isPostOwner = user._id === post.user._id;
 
     return (
         <div className="flex justify-center mt-4 w-[39.3rem]">
             <div className="bg-black text-white w-12/12 lg:w-9/12 rounded-lg shadow-lg overflow-hidden">
-
-                <div className="flex items-center p-2 lg:p-4">
+                <div className='flex items-center justify-between p-2 lg:p-4'>
                     <ProfileIcon flexdir={'row'} user={post.user} date={timeSincePost} />
+                    <div className="relative">
+                        <button onClick={toggleDropdown} className="flex gap-3 items-center text-white text-decoration-none">
+                            <BsThreeDots size={24} />
+                            <span>More</span>
+                        </button>
+                        {dropdownOpen && (
+                            <ul className="absolute right-0 mt-2 bg-[#292929] rounded shadow-lg text-small z-10">
+                                {isPostOwner && (
+                                    <>
+                                        <li className="px-4 py-2 cursor-pointer text-red-500 hover:bg-red-600" onClick={handleDelete}>Delete</li>
+                                        <li><hr className="dropdown-divider" /></li>
+                                    </>
+                                )}
+                                {!isPostOwner&&(<li className="px-4 py-2 cursor-pointer text-yellow-500 hover:bg-yellow-600">Report</li>)}
+                            </ul>
+                        )}
+                    </div>
                 </div>
                 <div className='video-container relative' style={{ border: "0.5px solid #80808057" }}>
                     {post.isReel ? (
@@ -135,10 +167,7 @@ const Post = ({ post }) => {
 
                     <p className="cursor-pointer" onClick={openLikeList}>{likes.length} likes</p>
 
-
                     <NavLink to={`/profile/${post.user._id}`}> <span className="">{post.user.username}</span></NavLink>  {post.caption}
-
-
 
                     <p className="cursor-pointer text-gray-600" onClick={() => setCommentDialogOpen(true)}>View all {comments.length} comments</p>
                     <div className="flex flex-col mt-2">
@@ -181,7 +210,6 @@ const Post = ({ post }) => {
                         likes={likes}
                         isOpen={likeListOpen}
                         closeList={closeLikeList}
-
                     />
                 )}
             </div>

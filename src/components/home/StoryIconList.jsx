@@ -9,8 +9,6 @@ const StoryIconList = () => {
     const { stories, loading, error } = useSelector((state) => state.stories);
     const { user } = useSelector((state) => state.user);
     const [newStory, setNewStory] = useState(false);
-    const [currentPage, setCurrentPage] = useState(0);
-    const storiesPerPage = 8; // Number of stories per page
 
     useEffect(() => {
         if (user) {
@@ -21,46 +19,40 @@ const StoryIconList = () => {
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error: {error}</p>;
 
-    // Calculate the number of pages based on the number of stories
-    const totalPages = Math.ceil(stories.length / storiesPerPage);
-
-    // Handle next and previous page functions
-    const nextPage = () => {
-        setCurrentPage(currentPage => Math.min(currentPage + 1, totalPages - 1));
-    };
-
-    const prevPage = () => {
-        setCurrentPage(currentPage => Math.max(currentPage - 1, 0));
-    };
+    // Filter stories to get unique users
+    const uniqueUsers = new Map();
+    stories.forEach(story => {
+        if (!uniqueUsers.has(story.user._id)) {
+            uniqueUsers.set(story.user._id, story);
+        }
+    });
 
     return (
-        <div className='flex flex-col items-center'>
-            <button onClick={() => setNewStory(true)} className="text-white font-medium mt-3 mb-2 bg-blue-500 px-4 py-2 rounded-md">Upload Story</button>
-            <div className='flex flex-col items-center w-full'>
-                <div className='w-full overflow-hidden'>
-                    <div className='flex gap-4 overflow-x-auto'>
-                        {stories.slice(currentPage * storiesPerPage, (currentPage + 1) * storiesPerPage).map(story => (
-                            <StoryIcon key={story._id} story={story} />
-                        ))}
-                    </div>
-                </div>
-                <div className='flex justify-center mt-4'>
-                    <button
-                        onClick={prevPage}
-                        disabled={currentPage === 0}
-                        className={`mx-2 px-4 py-2 bg-blue-500 text-white rounded-md ${currentPage === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    >
-                        Prev
-                    </button>
-                    <button
-                        onClick={nextPage}
-                        disabled={currentPage === totalPages - 1}
-                        className={`mx-2 px-4 py-2 bg-blue-500 text-white rounded-md ${currentPage === totalPages - 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    >
-                        Next
-                    </button>
-                </div>
+        <div className='flex items-center space-x-4 mt-10'>
+            {/* Upload button with an image and "Write your Story" text below */}
+            <div className='flex flex-col items-center'>
+                <button
+                    onClick={() => setNewStory(true)}
+                    className="w-[3.9rem] h-[3.9rem] flex items-center justify-center rounded-full border-2 border-gray-300 text-white bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500"
+                >
+                    <img 
+                        src={user.userImgUrl.url} 
+                        alt="Upload Story" 
+                        className='rounded-full'
+                    />
+                </button>
+                <p className="text-sm text-gray-500 mt-1">Upload  Story</p>
             </div>
+
+            {/* Story icons only if there are stories */}
+            {uniqueUsers.size > 0 && (
+                <div className='flex overflow-x-auto space-x-4'>
+                    {Array.from(uniqueUsers.values()).map(story => (
+                        <StoryIcon key={story.user._id} story={story} />
+                    ))}
+                </div>
+            )}
+
             <CreateStory newStory={newStory} setNewStory={setNewStory} />
         </div>
     );

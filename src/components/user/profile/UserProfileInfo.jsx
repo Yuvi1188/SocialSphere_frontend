@@ -17,7 +17,7 @@ const UserProfileInfo = () => {
     const [isMyProfile, setIsMyProfile] = useState(false);
     const [showFollowList, setShowFollowList] = useState(false);
     const [listType, setListType] = useState('');
-    // const [chatExists, setChatExists] = useState(null);
+    const [showDropdown, setShowDropdown] = useState(false); // Dropdown visibility state
     const followListRef = useRef(null);
 
     useEffect(() => {
@@ -30,7 +30,6 @@ const UserProfileInfo = () => {
     useEffect(() => {
         if (!chats || chats.length === 0) {
             dispatch(fetchChats());
-            console.log("hello")
         }
     }, [dispatch]);
 
@@ -38,6 +37,7 @@ const UserProfileInfo = () => {
         const handleClickOutside = (event) => {
             if (followListRef.current && !followListRef.current.contains(event.target)) {
                 setShowFollowList(false);
+                setShowDropdown(false); // Close dropdown when clicking outside
             }
         };
 
@@ -85,29 +85,21 @@ const UserProfileInfo = () => {
 
     const handleSendMessage = async () => {
         try {
-            // Find if a chat already exists with the user
             const chatExists = chats.find(chat => chat.users.some(user => user._id === id));
 
             if (chatExists) {
-                // Redirect to the existing chat
-                console.log("Chat already exists");
                 navigate(`/messages/${chatExists._id}`);
             } else {
-                // Dispatch createChat action to create a new chat with the user
                 dispatch(createChat([id, user._id], false, "", navigate));
-                // Once the chat is created, fetch the updated chats
-                // await dispatch(fetchChats());
-                // Find the newly created chat from the updated chats
-                // const newChats = await getChats(); // Assuming getChats() is a function that fetches the updated chats
-                // const newChat = chats.find(chat => chat.users.some(user => user._id === id));
-                // Redirect to the newly created chat
             }
         } catch (error) {
             console.error('Failed to send message', error);
         }
     };
 
-
+    const handleDropdownToggle = () => {
+        setShowDropdown(!showDropdown);
+    };
 
     if (loading || !profile) {
         return <div>Loading...</div>;
@@ -131,19 +123,25 @@ const UserProfileInfo = () => {
                         ) : (
                             <div className="flex mt-2 sm:mt-0 sm:ml-4">
                                 <button
-                                    onClick={handleFollow}
+                                    onClick={profile.isFollowing ? handleDropdownToggle : handleFollow}
                                     disabled={buttonLoading}
-                                    className={`bg-${profile.isFollowing ? 'gray-200' : 'blue-500'} text-${profile.isFollowing ? 'black' : 'white'} py-1 px-4 rounded-md text-sm mr-2`}
+                                    className={`py-1 px-4 rounded-md text-sm mr-2 ${profile.isFollowing ? 'bg-gray-200 text-black' : 'bg-blue-500 text-white'}`}
+                                    style={{ minWidth: '100px' }}
                                 >
                                     {buttonLoading ? 'Loading...' : profile.isFollowing ? 'Following' : 'Follow'}
                                 </button>
-                                {profile.isFollowing && (
-                                    <button
-                                        onClick={handleFollow}
-                                        className="bg-red-500 text-white py-1 px-4 rounded-md text-sm mr-2"
-                                    >
-                                        Unfollow
-                                    </button>
+                                {profile.isFollowing && showDropdown && (
+                                    <div className="absolute bg-white text-black border border-gray-300 rounded-md mt-2 py-2">
+                                        <button
+                                            onClick={async () => {
+                                                setShowDropdown(false); // Close dropdown
+                                                await handleFollow(); // Perform unfollow action
+                                            }}
+                                            className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                                        >
+                                            Unfollow
+                                        </button>
+                                    </div>
                                 )}
                                 <button
                                     onClick={handleSendMessage}

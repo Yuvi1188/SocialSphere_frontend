@@ -41,10 +41,11 @@ export const createPost = (formData) => {
 };
 
 export const removePost = (postId) => {
+    console.log("POSTID",postId);
     return async (dispatch) => {
         try {
             dispatch(setLoading({ loading: true }));
-            await axiosInstance.delete(`/posts/${postId}`);
+            await axiosInstance.delete(`/posts/deletePost/${postId}`);
             dispatch(deletePost({ postId }));
             toast.success('Post deleted successfully');
         } catch (error) {

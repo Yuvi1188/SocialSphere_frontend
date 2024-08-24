@@ -2,6 +2,7 @@ import { userActions } from '../store/user-slice';
 import axiosInstance from "../axiosConfig"
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 export const registerUser = (userData) => {
     return async (dispatch) => {
@@ -46,7 +47,7 @@ export const dobVerify = (dd, mm, yy) => {
         dispatch(userActions.userReducer({
             loading: true,
             isAuthenticated: false,
-            buttonLoading: false
+            buttonLoading: true
         }));
 
         try {
@@ -77,41 +78,48 @@ export const dobVerify = (dd, mm, yy) => {
 };
 
 export const sendOtp = (email) => {
+  console.log(email);
     return async (dispatch) => {
-        dispatch(userActions.userReducer({ buttonLoading: true, loading: false, isAuthenticated: false }));
+        dispatch(userActions.userReducer({ buttonLoading: false, loading: false, isAuthenticated: false }));
         try {
-            // await axios.post('/user/generateotp', { email });
-            toast.success('OTP sent, Check Your Email.');
-            dispatch(userActions.userReducer({ buttonLoading: false, loading: false, isAuthenticated: false }));
+          const response  =   await axios.post('http://localhost:8000/users/sendotp', {email} );
+          console.log(response);
+          console.log(response.data.success);
+           if(response.data.success){
+            toast.success("OTP sent successfully");
+            return true;
+           }
+           else{
+            toast.error("Failed to send OTP");
+            return false;
+           }
+            
         } catch (error) {
             console.error('Failed to send OTP', error);
             toast.error('Failed to send OTP. Please try again.');
             dispatch(userActions.userReducer({ buttonLoading: false, loading: false, isAuthenticated: false }));
+            return false;
         }
     }
 }
 
 export const verifyOtp = (otp, userData) => {
+    const email = userData.email;
+     
     return async (dispatch) => {
         dispatch(userActions.userReducer({ buttonLoading: true, loading: false, isAuthenticated: false }));
         try {
             // Simulating API call, replace it with actual call
-            const response = {
-                data: {
-                    isValid: true,
-                }
-            }
+          
+             const response =  await axios.post('http://localhost:8000/users/verifyOtp',{otp,email});
+             
 
-            const isValid = response.data.isValid;
+            const isValid = response.data.success;
 
             if (isValid) {
                 dispatch(userActions.userReducer({ buttonLoading: false, loading: true, isAuthenticated: false }));
                 const registerResponse = await axiosInstance.post('/users/register', userData);
-                // const registerResponse = {
-                //     data: {
-                //         token: "vgdghgfskhdufgdeiufgufgdeftruehyuifed",
-                //     }
-                // }
+                 
                 const token = registerResponse.data.token;
                 localStorage.setItem('authToken', token);
                 dispatch(userActions.userReducer({

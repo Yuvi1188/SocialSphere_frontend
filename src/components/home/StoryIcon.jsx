@@ -6,7 +6,7 @@ const StoryIcon = ({ story }) => {
     return (
         <div className='flex flex-col justify-start items-center'>
             <NavLink to={`/story/${story._id}`}>
-                <UserImg imag={story.user.userImgUrl} dim={3.9} />
+                <UserImg imag={story.user.userImgUrl.url} dim={3.9} />
             </NavLink>
             <p className="card-title ml-2 mb-0">{story.user.username}</p>
         </div>

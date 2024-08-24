@@ -6,14 +6,14 @@ import { getSuggestions } from '../../store/suggestion-action';
 const SuggestionList = () => {
     const dispatch = useDispatch();
     const { suggestions } = useSelector(state => state.suggestion);
-
+       console.log(suggestions);
     useEffect(() => {
         dispatch(getSuggestions());
     }, [dispatch]);
 
     return (
         <div className='p-20'>
-            <p>Suggested for you</p>
+            <span>Suggested for you</span>
             {suggestions.map((suggestion) => (
                 <Suggestion key={suggestion.username} suggestion={suggestion} />
             ))}

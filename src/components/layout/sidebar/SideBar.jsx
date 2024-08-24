@@ -8,7 +8,7 @@ import { FaBars } from 'react-icons/fa';
 import NotificationsSideBar from "./NotificationsSideBar"; // Assuming you have a Notifications sidebar component
 import { useDispatch, useSelector } from 'react-redux';
 import { logOutUser } from '../../../store/user-actions';
-
+import logo from "../../../assets/LOGO.jpg";
 const SideBar = ({ onCreatePost }) => {
     const dispatch = useDispatch();
     const [activeComponent, setActiveComponent] = useState(null);
@@ -51,7 +51,8 @@ const SideBar = ({ onCreatePost }) => {
             <div>
                 <NavLink to="/" className="flex items-center mb-3 text-white text-decoration-none">
                     <svg className="bi pe-none me-2" width="40" height="32"><use xlinkHref="#bootstrap"></use></svg>
-                    <span className="fs-4">Sidebar</span>
+                    <span className=" inline-block text-1xl font-semibold text-white tracking-wide">Social Sphere</span>
+
                 </NavLink>
 
                 <ul className="nav flex-column mb-auto">
