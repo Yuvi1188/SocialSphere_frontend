@@ -82,7 +82,7 @@ export const sendOtp = (email) => {
     return async (dispatch) => {
         dispatch(userActions.userReducer({ buttonLoading: false, loading: false, isAuthenticated: false }));
         try {
-          const response  =   await axios.post('http://localhost:8000/users/sendotp', {email} );
+          const response  =   await axiosInstance.post('/users/sendotp', {email} );
           console.log(response);
           console.log(response.data.success);
            if(response.data.success){
@@ -111,7 +111,7 @@ export const verifyOtp = (otp, userData) => {
         try {
             // Simulating API call, replace it with actual call
           
-             const response =  await axios.post('http://localhost:8000/users/verifyOtp',{otp,email});
+             const response =  await axiosInstance.post('/users/verifyOtp',{otp,email});
              
 
             const isValid = response.data.success;
