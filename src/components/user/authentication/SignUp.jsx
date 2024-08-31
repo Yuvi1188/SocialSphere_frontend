@@ -43,11 +43,8 @@ const SignUp = () => {
     .then(() => {
         form.reset();
         navigate('/dob');  // Navigate forward on success
-    })
-    .catch(() => {
-        toast.error("User already exist");
-        navigate(-1);  // Navigate back on failure
     });
+     
 
     };
 
