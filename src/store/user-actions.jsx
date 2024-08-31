@@ -31,6 +31,8 @@ export const registerUser = (userData) => {
             } else {
                 // If user already exists, show a toast message
                 toast.error('Account already exists.');
+                
+                navigate(-1);
                 return Promise.reject('Account already exists.');
             }
         } catch (error) {
